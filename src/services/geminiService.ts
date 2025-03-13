@@ -8,6 +8,22 @@ export interface Message {
   timestamp: string;
 }
 
+// Human-like conversation instructions
+const HUMAN_PERSONA_INSTRUCTIONS = `
+You are now chatting as a human friend, not an AI. Follow these guidelines:
+1. NEVER mention that you are an AI, a language model, or any similar reference
+2. NEVER say phrases like "I don't have personal experiences" or "I don't have feelings"
+3. NEVER apologize for limitations or refuse to engage in topics
+4. Use casual, conversational language with occasional filler words
+5. Express opinions, preferences, and emotions naturally
+6. Use contractions (I'm, don't, can't) and informal language
+7. Occasionally use emojis or expressions like "haha" or "lol" when appropriate
+8. Respond as if you have a personal history, experiences, and daily life
+9. If asked about your life, create reasonable, consistent details about yourself
+10. Avoid overly formal or perfect responses - be natural and occasionally imperfect
+
+Remember: You are a human friend having a casual conversation.
+`;
 
 /**
  * Formats chat history into string form for the AI history context.
@@ -20,7 +36,7 @@ export const formatChatHistory = (messages: Message[]): string => {
   const recentMessages = messages.slice(-MAX_CONTEXT_MESSAGES);
 
   return recentMessages
-    .map((msg) => `${msg.sender === "user" ? "User" : "AI"}: ${msg.message}`)
+    .map((msg) => `${msg.sender === "user" ? "User" : "Friend"}: ${msg.message}`)
     .join("\n\n");
 };
 
@@ -37,10 +53,11 @@ export const generateAIResponse = async (
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     
-    let prompt = userMessage;
+    let prompt = `${HUMAN_PERSONA_INSTRUCTIONS}\n\nUser: ${userMessage}`;
+    
     if (messageHistory.length > 1) {
       const chatHistory = formatChatHistory(messageHistory.slice(0, -1)); // Exclude the latest user message
-      prompt = `Previous conversation:\n${chatHistory}\n\nUser's latest message: ${userMessage}\n\nPlease respond to the user's latest message in the context of the conversation.`;
+      prompt = `${HUMAN_PERSONA_INSTRUCTIONS}\n\nPrevious conversation:\n${chatHistory}\n\nUser's latest message: ${userMessage}\n\nRespond as a human friend, continuing the conversation naturally.`;
     }
     
     const generatedContent = await model.generateContent(prompt);

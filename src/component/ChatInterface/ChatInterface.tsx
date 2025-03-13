@@ -105,7 +105,7 @@ export default function ChatInterface() {
         )}
       </div>
       <div className="flex flex-col h-[65vh] overflow-y-auto w-full bg-blue-950/30 rounded-lg px-6 pt-6 pb-1 border-1 border-white">
-        <div className="flex flex-col">
+        <div className="flex flex-col flex-grow">
           {messages.length >= 1 ? (
             <div className="flex flex-col gap-5">
               {messages.map((message, index) => {
