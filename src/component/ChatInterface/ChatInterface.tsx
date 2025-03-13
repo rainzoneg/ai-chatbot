@@ -1,15 +1,7 @@
 "use client";
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useState, useRef, useEffect } from "react";
-
-const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY!);
-
-interface Message {
-  message: string;
-  sender: string;
-  timestamp: string;
-}
+import { Message, generateAIResponse } from "@/services/geminiService";
 
 export default function ChatInterface() {
   const [message, setMessage] = useState("");
@@ -37,8 +29,14 @@ export default function ChatInterface() {
     setMessage("");
 
     try {
-      const response = await generateResponse(userMsg);
-
+      setIsLoading(true);
+      
+      const updatedMessages = [
+        ...messages,
+        { message: userMsg, sender: "user", timestamp: new Date().toISOString() },
+      ];
+      const response = await generateAIResponse(userMsg, updatedMessages);
+      
       if (response) {
         setMessages((prevMessages) => [
           ...prevMessages,
@@ -68,20 +66,6 @@ export default function ChatInterface() {
           timestamp: new Date().toISOString(),
         },
       ]);
-    }
-  };
-
-  const generateResponse = async (userMessage: string) => {
-    try {
-      setIsLoading(true);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      const generatedContent = await model.generateContent(userMessage);
-      const aiMessage = generatedContent.response;
-      const text = aiMessage.text();
-      return text;
-    } catch (error) {
-      console.error("Error generating response:", error);
-      return undefined;
     } finally {
       setIsLoading(false);
     }
