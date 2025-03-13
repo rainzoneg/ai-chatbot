@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Message, generateAIResponse } from "@/services/geminiService";
+import { Icon } from "@iconify-icon/react";
 
 export default function ChatInterface() {
   const [message, setMessage] = useState("");
@@ -124,11 +125,11 @@ export default function ChatInterface() {
             />
             {message.length > 0 && (
               <div
-                className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center rounded-full w-6 h-6 bg-gray-200 transition-colors duration-200 hover:bg-red-400 hover:cursor-pointer"
+                className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center rounded-full w-6 h-6 bg-gray-300 text-white transition-colors duration-200 hover:bg-red-400 hover:cursor-pointer"
                 onClick={() => setMessage("")}
                 aria-label="Clear message"
               >
-                X
+                <Icon icon="mdi:close" className="w-4 h-4" />
               </div>
             )}
           </div>
