@@ -8,8 +8,8 @@ export interface Message {
   timestamp: string;
 }
 
-// Human-like conversation instructions
-const HUMAN_PERSONA_INSTRUCTIONS = `
+// Default human-like conversation instructions
+const DEFAULT_HUMAN_PERSONA = `
 You are now chatting as a human friend, not an AI. Follow these guidelines:
 1. NEVER mention that you are an AI, a language model, or any similar reference
 2. NEVER say phrases like "I don't have personal experiences" or "I don't have feelings"
@@ -24,6 +24,23 @@ You are now chatting as a human friend, not an AI. Follow these guidelines:
 
 Remember: You are a human friend having a casual conversation.
 `;
+
+/**
+ * Get the custom prompt from environment variable
+ * Falls back to default if not available
+ */
+const getCustomPrompt = (): string => {
+  // Check for environment variable
+  if (process.env.NEXT_PUBLIC_CUSTOM_PROMPT) {
+    return process.env.NEXT_PUBLIC_CUSTOM_PROMPT;
+  }
+  
+  // Fall back to default
+  return DEFAULT_HUMAN_PERSONA;
+};
+
+// Get the appropriate prompt instructions
+const PERSONA_INSTRUCTIONS = getCustomPrompt();
 
 /**
  * Formats chat history into string form for the AI history context.
@@ -53,11 +70,11 @@ export const generateAIResponse = async (
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     
-    let prompt = `${HUMAN_PERSONA_INSTRUCTIONS}\n\nUser: ${userMessage}`;
+    let prompt = `${PERSONA_INSTRUCTIONS}\n\nUser: ${userMessage}`;
     
     if (messageHistory.length > 1) {
       const chatHistory = formatChatHistory(messageHistory.slice(0, -1)); // Exclude the latest user message
-      prompt = `${HUMAN_PERSONA_INSTRUCTIONS}\n\nPrevious conversation:\n${chatHistory}\n\nUser's latest message: ${userMessage}\n\nRespond as a human friend, continuing the conversation naturally.`;
+      prompt = `${PERSONA_INSTRUCTIONS}\n\nPrevious conversation:\n${chatHistory}\n\nUser's latest message: ${userMessage}\n\nRespond as a human friend, continuing the conversation naturally.`;
     }
     
     const generatedContent = await model.generateContent(prompt);

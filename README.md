@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Chatbot with Gemini
+
+A modern, responsive chatbot application built with Next.js and Google's Gemini AI.
+
+## Features
+
+- Real-time chat interface
+- Gemini AI integration for natural conversations
+- Conversation history and context
+- Sound effects for message interactions
+- Responsive design for all devices
+- Customizable AI persona
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env.local` file based on `.env.local.example`
+4. Add your Gemini API key to the `.env.local` file
+5. Run the development server:
+   ```bash
+   npm run dev
+   ```
+6. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Customizing the AI Persona
+
+You can customize how the AI responds by creating your own persona instructions:
+
+### Using Environment Variables
+
+1. Open your `.env.local` file
+2. Uncomment and modify the `NEXT_PUBLIC_CUSTOM_PROMPT` variable
+3. Add your custom instructions for how the AI should behave
+
+Example:
+```
+NEXT_PUBLIC_CUSTOM_PROMPT="You are Alex, a knowledgeable historian with a passion for ancient civilizations. You speak in a slightly formal manner, often making references to historical events and drawing parallels between past and present. You're particularly enthusiastic about Roman history and architecture. When chatting, you occasionally mention interesting historical facts related to the topic at hand."
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Tips for Creating Effective Personas
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Be specific about personality traits, interests, and speaking style
+- Include details about how the persona should respond to different topics
+- Consider adding background information that shapes the persona's viewpoint
+- Include speech patterns or phrases the persona might use
+- Specify any topics the persona should be particularly knowledgeable about
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Sound Effects
 
-## Learn More
+The application includes sound effects for message interactions. You can:
 
-To learn more about Next.js, take a look at the following resources:
+- Toggle sounds on/off using the volume icon
+- Add custom sounds by replacing the files in the `public/sounds` directory
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
