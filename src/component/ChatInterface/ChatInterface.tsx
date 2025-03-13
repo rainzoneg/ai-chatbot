@@ -3,12 +3,21 @@
 import { useState, useRef, useEffect } from "react";
 import { Message, generateAIResponse } from "@/services/geminiService";
 import { Icon } from "@iconify-icon/react";
+import { initializeAudio, playSound } from "@/services/audioService";
 
 export default function ChatInterface() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAudio, setIsAudio] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Initialize audio on client side
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      initializeAudio();
+    }
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -28,7 +37,7 @@ export default function ChatInterface() {
       { message: userMsg, sender: "user", timestamp: new Date().toISOString() },
     ]);
     setMessage("");
-
+    playSound("messageSent", isAudio);
     try {
       setIsLoading(true);
 
@@ -51,6 +60,7 @@ export default function ChatInterface() {
             timestamp: new Date().toISOString(),
           },
         ]);
+        playSound("messageReceived", isAudio);
       } else {
         setMessages((prevMessages) => [
           ...prevMessages,
@@ -77,7 +87,23 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col gap-5 w-4/5 md:w-3/5 lg:w-2/5">
+    <div className="flex flex-col gap-4 w-4/5 md:w-3/5 lg:w-2/5">
+      <div
+        onClick={() => setIsAudio(!isAudio)}
+        className="flex items-center ml-auto text-lg gap-2 hover:cursor-pointer"
+      >
+        {isAudio ? (
+          <>
+            <Icon icon="mdi:volume-high" className="w-auto" />
+            <p className="font-semibold text-sm">Audio</p>
+          </>
+        ) : (
+          <>
+            <Icon icon="mdi:volume-off" className="w-auto" />
+            <p className="font-semibold text-gray-400/50 text-sm">Audio</p>
+          </>
+        )}
+      </div>
       <div className="flex flex-col h-[65vh] overflow-y-auto w-full bg-blue-950/30 rounded-lg px-6 pt-6 pb-1 border-1 border-white">
         <div className="flex flex-col">
           {messages.length >= 1 ? (
