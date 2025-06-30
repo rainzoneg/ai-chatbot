@@ -5,12 +5,14 @@ import { Message, generateAIResponse } from "@/services/geminiService";
 import { Icon } from "@iconify-icon/react";
 import { initializeAudio, playSound } from "@/services/audioService";
 import AudioToggle from "../AudioToggle";
+import Sidebar from "../Sidebar/Sidebar";
 
 export default function ChatInterface() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Initialize audio on client side
@@ -86,7 +88,16 @@ export default function ChatInterface() {
 
   return (
     <div className="flex flex-col gap-4 w-4/5 md:w-3/5 lg:w-2/5">
-      <AudioToggle isAudioEnabled={isAudioEnabled} toggleAudio={setIsAudioEnabled} />
+      <Sidebar isOpen={isSidebarOpen} />
+      <div className="flex flex-row gap-4 items-center jusitfy-center ml-auto">
+        <AudioToggle isAudioEnabled={isAudioEnabled} toggleAudio={setIsAudioEnabled} />
+        <div
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="text-white hover:cursor-pointer items-center justify-center flex"
+        >
+          <Icon icon="mdi:menu" className="text-white" />
+        </div>
+      </div>
       <div className="flex flex-col h-[65vh] overflow-y-auto w-full bg-blue-950/30 rounded-lg px-6 pt-6 pb-1 border-1 border-white">
         <div className="flex flex-col flex-grow">
           {messages.length >= 1 ? (
@@ -109,7 +120,7 @@ export default function ChatInterface() {
               <div ref={messagesEndRef} />
             </div>
           ) : (
-            <p className="text-center my-auto">Type your message to begin!</p>
+            <p className="text-center my-auto text-white">Type your message to begin!</p>
           )}
         </div>
       </div>
