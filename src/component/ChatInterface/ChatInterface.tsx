@@ -6,6 +6,7 @@ import { Icon } from "@iconify-icon/react";
 import { initializeAudio, playSound } from "@/services/audioService";
 import AudioToggle from "../AudioToggle";
 import Sidebar from "../Sidebar/Sidebar";
+import { useChatContext } from "../ChatProvider";
 
 export default function ChatInterface() {
   const [message, setMessage] = useState("");
@@ -14,6 +15,7 @@ export default function ChatInterface() {
   const [isAudioEnabled, setIsAudioEnabled] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { chatbotName } = useChatContext();
 
   // Initialize audio on client side
   useEffect(() => {
@@ -49,14 +51,14 @@ export default function ChatInterface() {
           timestamp: new Date().toISOString(),
         },
       ];
-      const response = await generateAIResponse(userMsg, updatedMessages);
+      const response = await generateAIResponse(userMsg, updatedMessages, chatbotName);
 
       if (response) {
         setMessages((prevMessages) => [
           ...prevMessages,
           {
             message: response,
-            sender: "AI",
+            sender: chatbotName || "AI",
             timestamp: new Date().toISOString(),
           },
         ]);
@@ -66,7 +68,7 @@ export default function ChatInterface() {
           ...prevMessages,
           {
             message: "Sorry, I couldn't generate a response at this time.",
-            sender: "AI",
+            sender: chatbotName || "AI",
             timestamp: new Date().toISOString(),
           },
         ]);
@@ -77,7 +79,7 @@ export default function ChatInterface() {
         ...prevMessages,
         {
           message: "Sorry, an error occurred while processing your request.",
-          sender: "AI",
+          sender: chatbotName || "AI",
           timestamp: new Date().toISOString(),
         },
       ]);
@@ -110,7 +112,7 @@ export default function ChatInterface() {
                         message.sender === "user" ? "text-cyan-700 font-semibold" : "text-rose-700 font-semibold"
                       }
                     >
-                      {message.sender === "user" ? "You" : "AI"}
+                      {message.sender === "user" ? "You" : chatbotName || "AI"}
                     </p>
                     <p className="whitespace-pre-wrap">{message.message}</p>
                     <p className="text-xs mt-2 text-gray-500">{message.timestamp}</p>

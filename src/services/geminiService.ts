@@ -34,7 +34,7 @@ const getCustomPrompt = (): string => {
   if (process.env.NEXT_PUBLIC_CUSTOM_PROMPT) {
     return process.env.NEXT_PUBLIC_CUSTOM_PROMPT;
   }
-  
+
   // Fall back to default
   return DEFAULT_HUMAN_PERSONA;
 };
@@ -45,38 +45,44 @@ const PERSONA_INSTRUCTIONS = getCustomPrompt();
 /**
  * Formats chat history into string form for the AI history context.
  * @param messages Array of messages that make up the chat context/history.
+ * @param chatbotName The name of the chatbot (defaults to "Friend")
  * @returns The formatted chat history.
  */
-export const formatChatHistory = (messages: Message[]): string => {
+export const formatChatHistory = (messages: Message[], chatbotName: string = "Friend"): string => {
   const MAX_CONTEXT_MESSAGES = 10;
 
   const recentMessages = messages.slice(-MAX_CONTEXT_MESSAGES);
 
-  return recentMessages
-    .map((msg) => `${msg.sender === "user" ? "User" : "Friend"}: ${msg.message}`)
-    .join("\n\n");
+  return recentMessages.map((msg) => `${msg.sender === "user" ? "User" : chatbotName}: ${msg.message}`).join("\n\n");
 };
 
 /**
  * Generates AI response based on user message and conversation history as the chat functionality.
  * @param userMessage The latest user message
  * @param messageHistory Array of previous messages for context
+ * @param chatbotName The name of the chatbot (defaults to "Friend")
  * @returns AI-generated response text or undefined if error
  */
 export const generateAIResponse = async (
   userMessage: string,
-  messageHistory: Message[] = []
+  messageHistory: Message[] = [],
+  chatbotName: string = "Friend"
 ): Promise<string | undefined> => {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-    
-    let prompt = `${PERSONA_INSTRUCTIONS}\n\nUser: ${userMessage}`;
-    
+
+    // Create a personalized instruction with the bot's name
+    const personalizedInstructions =
+      PERSONA_INSTRUCTIONS +
+      `\n\nYour name is ${chatbotName}. When users address you by this name, respond accordingly.`;
+
+    let prompt = `${personalizedInstructions}\n\nUser: ${userMessage}`;
+
     if (messageHistory.length > 1) {
-      const chatHistory = formatChatHistory(messageHistory.slice(0, -1)); // Exclude the latest user message
-      prompt = `${PERSONA_INSTRUCTIONS}\n\nPrevious conversation:\n${chatHistory}\n\nUser's latest message: ${userMessage}\n\nRespond as a human friend, continuing the conversation naturally.`;
+      const chatHistory = formatChatHistory(messageHistory.slice(0, -1), chatbotName); // Exclude the latest user message
+      prompt = `${personalizedInstructions}\n\nPrevious conversation:\n${chatHistory}\n\nUser's latest message: ${userMessage}\n\nRespond as ${chatbotName}, continuing the conversation naturally.`;
     }
-    
+
     const generatedContent = await model.generateContent(prompt);
     const aiMessage = generatedContent.response;
     const text = aiMessage.text();
@@ -85,4 +91,4 @@ export const generateAIResponse = async (
     console.error("Error generating response:", error);
     return undefined;
   }
-}; 
+};
