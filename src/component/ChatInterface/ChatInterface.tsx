@@ -4,12 +4,13 @@ import { useState, useRef, useEffect } from "react";
 import { Message, generateAIResponse } from "@/services/geminiService";
 import { Icon } from "@iconify-icon/react";
 import { initializeAudio, playSound } from "@/services/audioService";
+import AudioToggle from "../AudioToggle";
 
 export default function ChatInterface() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAudio, setIsAudio] = useState(false);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Initialize audio on client side
@@ -32,12 +33,9 @@ export default function ChatInterface() {
     if (message.trim() === "") return;
 
     const userMsg = message.trim();
-    setMessages([
-      ...messages,
-      { message: userMsg, sender: "user", timestamp: new Date().toISOString() },
-    ]);
+    setMessages([...messages, { message: userMsg, sender: "user", timestamp: new Date().toISOString() }]);
     setMessage("");
-    playSound("messageSent", isAudio);
+    playSound("messageSent", isAudioEnabled);
     try {
       setIsLoading(true);
 
@@ -60,7 +58,7 @@ export default function ChatInterface() {
             timestamp: new Date().toISOString(),
           },
         ]);
-        playSound("messageReceived", isAudio);
+        playSound("messageReceived", isAudioEnabled);
       } else {
         setMessages((prevMessages) => [
           ...prevMessages,
@@ -88,45 +86,23 @@ export default function ChatInterface() {
 
   return (
     <div className="flex flex-col gap-4 w-4/5 md:w-3/5 lg:w-2/5">
-      <div
-        onClick={() => setIsAudio(!isAudio)}
-        className="flex items-center ml-auto text-lg gap-2 hover:cursor-pointer"
-      >
-        {isAudio ? (
-          <>
-            <Icon icon="mdi:volume-high" className="w-auto" />
-            <p className="font-semibold text-sm">Audio</p>
-          </>
-        ) : (
-          <>
-            <Icon icon="mdi:volume-off" className="w-auto" />
-            <p className="font-semibold text-gray-400/50 text-sm">Audio</p>
-          </>
-        )}
-      </div>
+      <AudioToggle isAudioEnabled={isAudioEnabled} toggleAudio={setIsAudioEnabled} />
       <div className="flex flex-col h-[65vh] overflow-y-auto w-full bg-blue-950/30 rounded-lg px-6 pt-6 pb-1 border-1 border-white">
         <div className="flex flex-col flex-grow">
           {messages.length >= 1 ? (
             <div className="flex flex-col gap-5">
               {messages.map((message, index) => {
                 return (
-                  <div
-                    key={index}
-                    className="flex flex-col bg-amber-50 text-black px-4 py-2 rounded-lg break-words"
-                  >
+                  <div key={index} className="flex flex-col bg-amber-50 text-black px-4 py-2 rounded-lg break-words">
                     <p
                       className={
-                        message.sender === "user"
-                          ? "text-cyan-700 font-semibold"
-                          : "text-rose-700 font-semibold"
+                        message.sender === "user" ? "text-cyan-700 font-semibold" : "text-rose-700 font-semibold"
                       }
                     >
                       {message.sender === "user" ? "You" : "AI"}
                     </p>
                     <p className="whitespace-pre-wrap">{message.message}</p>
-                    <p className="text-xs mt-2 text-gray-500">
-                      {message.timestamp}
-                    </p>
+                    <p className="text-xs mt-2 text-gray-500">{message.timestamp}</p>
                   </div>
                 );
               })}
