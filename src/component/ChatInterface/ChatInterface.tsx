@@ -10,11 +10,11 @@ import { useChatContext } from "../ChatProvider";
 import MessageBubble from "./MessageBubble";
 
 export default function ChatInterface() {
-  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [messageInput, setMessageInput] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { chatbotName } = useChatContext();
 
@@ -35,11 +35,11 @@ export default function ChatInterface() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (message.trim() === "") return;
+    if (messageInput.trim() === "") return;
 
-    const userMsg = message.trim();
+    const userMsg = messageInput.trim();
     setMessages([...messages, { message: userMsg, sender: "user", timestamp: new Date().toISOString() }]);
-    setMessage("");
+    setMessageInput("");
     playSound("messageSent", isAudioEnabled);
     try {
       setIsLoading(true);
@@ -132,14 +132,14 @@ export default function ChatInterface() {
               className="flex flex-col h-[8vh] w-full bg-white text-black px-6 rounded-lg"
               type="text"
               placeholder="Type your message here..."
-              onChange={(e) => setMessage(e.target.value)}
-              value={message}
+              onChange={(e) => setMessageInput(e.target.value)}
+              value={messageInput}
               disabled={isLoading}
             />
-            {message.length > 0 && (
+            {messageInput.length > 0 && (
               <div
                 className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center rounded-full w-6 h-6 bg-gray-300 text-white transition-colors duration-200 hover:bg-red-400 hover:cursor-pointer"
-                onClick={() => setMessage("")}
+                onClick={() => setMessageInput("")}
                 aria-label="Clear message"
               >
                 <Icon icon="mdi:close" className="w-4 h-4" />
