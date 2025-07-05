@@ -7,6 +7,7 @@ import { initializeAudio, playSound } from "@/services/audioService";
 import AudioToggle from "../AudioToggle";
 import Sidebar from "../Sidebar/Sidebar";
 import { useChatContext } from "../ChatProvider";
+import MessageBubble from "./MessageBubble";
 
 export default function ChatInterface() {
   const [message, setMessage] = useState("");
@@ -106,16 +107,13 @@ export default function ChatInterface() {
             <div className="flex flex-col gap-5">
               {messages.map((message, index) => {
                 return (
-                  <div key={index} className="flex flex-col bg-amber-50 text-black px-4 py-2 rounded-lg break-words">
-                    <p
-                      className={
-                        message.sender === "user" ? "text-cyan-700 font-semibold" : "text-rose-700 font-semibold"
-                      }
-                    >
-                      {message.sender === "user" ? "You" : chatbotName || "AI"}
-                    </p>
-                    <p className="whitespace-pre-wrap">{message.message}</p>
-                    <p className="text-xs mt-2 text-gray-500">{message.timestamp}</p>
+                  <div key={index}>
+                    <MessageBubble
+                      message={message.message}
+                      sender={message.sender}
+                      chatbotName={chatbotName}
+                      timestamp={message.timestamp}
+                    />
                   </div>
                 );
               })}
