@@ -9,7 +9,11 @@ interface Props {
 
 export default function MessageBubble({ message, sender, chatbotName, timestamp }: Props) {
   return (
-    <div className="flex flex-col bg-amber-50 text-black px-4 py-2 rounded-lg break-words">
+    <div
+      className={`flex flex-col max-w-fit bg-amber-50 text-black px-4 py-2 rounded-lg break-words ${
+        sender === "user" && "ml-auto bg-blue-100"
+      }`}
+    >
       <p className={sender === "user" ? "text-cyan-700 font-semibold" : "text-rose-700 font-semibold"}>
         {sender === "user" ? "You" : chatbotName || "AI"}
       </p>
