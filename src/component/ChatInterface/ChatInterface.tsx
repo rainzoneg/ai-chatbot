@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Message, generateAIResponse } from "@/services/geminiService";
+import { Message, generateAIResponse } from "@/services/openaiService";
 import { Icon } from "@iconify-icon/react";
 import { initializeAudio, playSound } from "@/services/audioService";
 import AudioToggle from "../AudioToggle";
