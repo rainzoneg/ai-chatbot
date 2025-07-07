@@ -65,24 +65,26 @@ export const formatChatHistory = (messages: Message[], chatbotName: string = "Fr
  * @param userMessage The latest user message
  * @param messageHistory Array of previous messages for context
  * @param chatbotName The name of the chatbot (defaults to "Friend")
+ * @param userName The name of the user (defaults to "User")
  * @returns AI-generated response text or undefined if error
  */
 export const generateAIResponse = async (
   userMessage: string,
   messageHistory: Message[] = [],
-  chatbotName: string = "Friend"
+  chatbotName: string = "Friend",
+  userName: string = "User"
 ): Promise<string | undefined> => {
   try {
     // Create a personalized instruction with the bot's name
     const personalizedInstructions =
       PERSONA_INSTRUCTIONS +
-      `\n\nYour name is ${chatbotName}. When users address you by this name, respond accordingly.`;
+      `\n\nYour name is ${chatbotName}. When users address you by this name, respond accordingly. The user's name is ${userName}.`;
 
-    let prompt = `${personalizedInstructions}\n\nUser: ${userMessage}`;
+    let prompt = `${personalizedInstructions}\n\n${userName}: ${userMessage}`;
 
     if (messageHistory.length > 1) {
       const chatHistory = formatChatHistory(messageHistory.slice(0, -1), chatbotName); // Exclude the latest user message
-      prompt = `${personalizedInstructions}\n\nPrevious conversation:\n${chatHistory}\n\nUser's latest message: ${userMessage}\n\nRespond as ${chatbotName}, continuing the conversation naturally.`;
+      prompt = `${personalizedInstructions}\n\nPrevious conversation:\n${chatHistory}\n\n${userName}'s latest message: ${userMessage}\n\nRespond as ${chatbotName}, continuing the conversation naturally.`;
     }
 
     const completion = await openai.chat.completions.create({
