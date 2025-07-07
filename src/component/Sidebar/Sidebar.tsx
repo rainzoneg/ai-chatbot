@@ -6,7 +6,7 @@ import { useChatContext } from "../ChatProvider";
  * @returns The sidebar component.
  */
 export default function Sidebar({ isOpen }: { isOpen: boolean }) {
-  const { chatbotName, setChatbotName } = useChatContext();
+  const { chatbotName, userName, setChatbotName, setUserName } = useChatContext();
   return (
     <aside
       className={`fixed top-0 right-0 h-full w-[23%] bg-gray-800/50 backdrop-blur-sm transition-all duration-300 ease-in-out ${
@@ -23,6 +23,17 @@ export default function Sidebar({ isOpen }: { isOpen: boolean }) {
               className="text-white text-sm bg-gray-800/20 border-1 border-gray-600/50 rounded-md p-2"
               value={chatbotName}
               onChange={(e) => setChatbotName(e.target.value)}
+              placeholder="AI"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <span className="text-white text-sm">Your Name</span>
+            <input
+              type="text"
+              className="text-white text-sm bg-gray-800/20 border-1 border-gray-600/50 rounded-md p-2"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              placeholder="You"
             />
           </div>
         </div>

@@ -4,12 +4,16 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 interface ChatContextType {
   chatbotName: string;
+  userName: string;
   setChatbotName: (name: string) => void;
+  setUserName: (name: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType>({
   chatbotName: "",
   setChatbotName: () => {},
+  userName: "",
+  setUserName: () => {},
 });
 
 /**
@@ -19,7 +23,12 @@ const ChatContext = createContext<ChatContextType>({
  */
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [chatbotName, setChatbotName] = useState("AI");
-  return <ChatContext.Provider value={{ chatbotName, setChatbotName }}>{children}</ChatContext.Provider>;
+  const [userName, setUserName] = useState("You");
+  return (
+    <ChatContext.Provider value={{ chatbotName, setChatbotName, userName, setUserName }}>
+      {children}
+    </ChatContext.Provider>
+  );
 };
 
 export const useChatContext = () => useContext(ChatContext);
