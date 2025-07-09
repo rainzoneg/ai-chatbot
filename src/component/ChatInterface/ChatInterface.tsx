@@ -16,7 +16,7 @@ export default function ChatInterface() {
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { chatbotName, userName } = useChatContext();
+  const { chatbotName, userName, systemPrompt } = useChatContext();
 
   // Initialize audio on client side
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function ChatInterface() {
           timestamp: new Date().toISOString(),
         },
       ];
-      const response = await generateAIResponse(userMsg, updatedMessages, chatbotName, userName);
+      const response = await generateAIResponse(userMsg, updatedMessages, chatbotName, userName, systemPrompt);
 
       if (response) {
         setMessages((prevMessages) => [
