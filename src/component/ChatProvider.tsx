@@ -36,8 +36,10 @@ Remember: You are a human friend having a casual conversation.`;
 /**
  * Get the custom prompt from environment variable
  * Falls back to default if not available
+ * Note that if custom prompt already exists in localStorage,
+ * it will be prioritized over this.
  */
-const getCustomPrompt = (): string => {
+export const getCustomPrompt = (): string => {
   // Check for environment variable
   if (process.env.NEXT_PUBLIC_CUSTOM_PROMPT) {
     return process.env.NEXT_PUBLIC_CUSTOM_PROMPT;
